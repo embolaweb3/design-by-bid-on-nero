@@ -1,11 +1,13 @@
 "use client"
 
 import { useEffect, useState } from 'react';
-import { getSigner, getSupportedTokens, initAAClient, initAABuilder } from '../app/utilities/aaUtils';
+import { getSigner, getSupportedTokens, initAAClient, initAABuilder, postProject } from '../app/utilities/aaUtils';
 import WalletConnect from './components/WalletConnect';
 import { toast } from 'react-toastify';
+import { ethers } from 'ethers';
 // import { useContract } from '../app/utilities/contract';
 import ProjectList from './components/ProjectList';
+import PostProjectForm from './components/PostProjectForm';
 
 const Home = () => {
   const [projects, setProjects] = useState([]);
@@ -55,6 +57,15 @@ const Home = () => {
     loadTokens();
   }, [signer]);
 
+    useEffect(() => {
+    const loadProjects = async () => {
+      const projects = await fetchProjects();
+      setProjects(projects); 
+    };
+
+    loadProjects();
+  }, [fetchProjects]);
+
   const handleWalletConnected = async (eoaAddr: string, aaAddr: string) => {
     try {
       // Get the real signer from the wallet - don't use mock signers!
@@ -102,20 +113,37 @@ const Home = () => {
     }
   };
 
+   const postingProject = async (projectData:any) => {
+    if (!signer) return;
 
-  useEffect(() => {
-    const loadProjects = async () => {
-      const projects = await fetchProjects();
-      setProjects(projects); 
-    };
+    const { description, budget, deadline, milestones } = projectData;
 
-    loadProjects();
-  }, [fetchProjects]);
+    try {
+      const tx = await postProject(
+        signer,
+        description,
+        ethers.utils.parseEther(budget),
+        Math.floor(new Date(deadline).getTime() / 1000),
+        milestones.map((milestone :any) => ethers.utils.parseEther(milestone))
+      );
+      if(tx.transactionHash{
+      alert('Project posted successfully');
+
+      })
+      // fetchProjects();
+    } catch (error) {
+      console.error("Error posting project:", error);
+    }
+  };
+
+
+
 
   return (
     <div className="container mx-auto">
       <WalletConnect onWalletConnected={handleWalletConnected} />
       <h1 className="text-3xl font-bold mb-6">DesignByBid Projects</h1>
+      <PostProjectForm onSubmit={postingProject} />
       <ProjectList projects={projects} />
     </div>
   );

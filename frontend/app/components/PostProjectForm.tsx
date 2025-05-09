@@ -1,11 +1,12 @@
 import { useState } from 'react';
+import PaymentTypeSelector from './PaymentTypeSelector';
 
 
 export default function PostProjectForm({ onSubmit }:any) {
   const [description, setDescription] = useState('');
   const [budget, setBudget] = useState('');
   const [deadline, setDeadline] = useState('');
-  const [milestones, setMilestones] = useState([]);
+  const [milestones, setMilestones] = useState<string[]>([]);
 
   const handleSubmit = () => {
     onSubmit({ description, budget, deadline, milestones });
@@ -42,6 +43,7 @@ export default function PostProjectForm({ onSubmit }:any) {
         onChange={(e) => setMilestones(e.target.value.split(','))}
         className="mb-2 p-2 border rounded w-full"
       />
+      {/* <PaymentTypeSelector /> */}
       <button
         onClick={handleSubmit}
         className="bg-green-500 text-white p-2 rounded w-full mt-4"
