@@ -286,19 +286,6 @@ export const executeOperation = async (
 // =================================================================
 // DESIGN-BY-BID SMART CONTRACT FUNCTIONS
 // =================================================================
-
-
-  export const getBidCount = async (
-    accountSigner: ethers.Signer
-  ) => {
-    try {
-        const contract = new ethers.Contract(CONTRACT_ADDRESSES.designByBidContract,ABI,accountSigner);
-        return await contract.bidCount();
-    } catch (error) {
-      console.error("Error fetching bid count:", error);
-      throw error;
-    }
-  };
   
   export const postProject = async (
   accountSigner: ethers.Signer,
@@ -471,6 +458,122 @@ export const voteOnDispute = async (
     );
   } catch (error) {
     console.error(`Error voting on dispute ${disputeId}:`, error);
+    throw error;
+  }
+};
+
+export const getBidCount = async (
+  accountSigner: ethers.Signer
+) => {
+  try {
+    const contract = new ethers.Contract(
+      CONTRACT_ADDRESSES.designByBidContract,
+      ABI,
+      accountSigner
+    );
+    return await contract.bidCount();
+  } catch (error) {
+    console.error("Error fetching bid count:", error);
+    throw error;
+  }
+};
+
+export const getBid = async (
+  accountSigner: ethers.Signer,
+  projectId: number,
+  bidIndex: number
+) => {
+  try {
+    const contract = new ethers.Contract(
+      CONTRACT_ADDRESSES.designByBidContract,
+      ABI,
+      accountSigner
+    );
+    return await contract.bids(projectId, bidIndex);
+  } catch (error) {
+    console.error(`Error fetching bid ${bidIndex} for project ${projectId}:`, error);
+    throw error;
+  }
+};
+
+export const getDisputeCount = async (
+  accountSigner: ethers.Signer 
+) => {
+  try {
+    const contract = new ethers.Contract(
+      CONTRACT_ADDRESSES.designByBidContract,
+      ABI,
+      accountSigner
+    );
+    return await contract.disputeCount();
+  } catch (error) {
+    console.error("Error fetching dispute count:", error);
+    throw error;
+  }
+};
+
+export const getDispute = async (
+  accountSigner: ethers.Signer,
+  disputeId: number
+) => {
+  try {
+    const contract = new ethers.Contract(
+      CONTRACT_ADDRESSES.designByBidContract,
+      ABI,
+      accountSigner
+    );
+    return await contract.disputes(disputeId);
+  } catch (error) {
+    console.error(`Error fetching dispute ${disputeId}:`, error);
+    throw error;
+  }
+};
+
+export const getAllProjects = async (
+  accountSigner: ethers.Signer 
+) => {
+  try {
+    const contract = new ethers.Contract(
+      CONTRACT_ADDRESSES.designByBidContract,
+      ABI,
+      accountSigner
+    );
+    return await contract.fetchProjects();
+  } catch (error) {
+    console.error("Error fetching projects:", error);
+    throw error;
+  }
+};
+
+export const getProjectCount = async (
+  accountSigner: ethers.Signer
+) => {
+  try {
+    const contract = new ethers.Contract(
+      CONTRACT_ADDRESSES.designByBidContract,
+      ABI,
+      accountSigner
+    );
+    return await contract.projectCount();
+  } catch (error) {
+    console.error("Error fetching project count:", error);
+    throw error;
+  }
+};
+
+export const getProject = async (
+  accountSigner: ethers.Signer,
+  projectId: number
+) => {
+  try {
+    const contract = new ethers.Contract(
+      CONTRACT_ADDRESSES.designByBidContract,
+      ABI,
+      accountSigner
+    );
+    return await contract.projects(projectId);
+  } catch (error) {
+    console.error(`Error fetching project ${projectId}:`, error);
     throw error;
   }
 };
