@@ -126,10 +126,10 @@ const Home = () => {
         Math.floor(new Date(deadline).getTime() / 1000),
         milestones.map((milestone :any) => ethers.utils.parseEther(milestone))
       );
-      if(tx.transactionHash{
+      if(tx.transactionHash){
       alert('Project posted successfully');
 
-      })
+      }
       // fetchProjects();
     } catch (error) {
       console.error("Error posting project:", error);
