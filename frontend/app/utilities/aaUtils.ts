@@ -529,6 +529,16 @@ export const getDispute = async (
   }
 };
 
+export const isFirstTimePoster = async(accountSigner: ethers.Signer, userAddress: string)=> {
+  const contract = new ethers.Contract(
+    CONTRACT_ADDRESSES.designByBidContract,ABI,accountSigner);
+
+  const filter = contract.filters.ProjectPosted(userAddress);
+  const events = await contract.queryFilter(filter);
+
+  return events.length === 0;
+}
+
 export const getAllProjects = async (
   accountSigner: ethers.Signer 
 ) => {

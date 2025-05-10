@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react';
 import {
   getSigner, getSupportedTokens, initAAClient, initAABuilder,
   getProject, postProject,
-  getAllProjects
+  getAllProjects,
+  isFirstTimePoster
 } from '../app/utilities/aaUtils';
 import WalletConnect from './components/WalletConnect';
 import { toast } from 'react-toastify';
@@ -115,27 +116,28 @@ const Home = () => {
 
   const postingProject = async (projectData: any) => {
     if (!signer) return;
+    const paymentType = await isFirstTimePoster(signer, aaAddress) ? 0 : 1;
+    console.log(paymentType)
+    // const { description, budget, deadline, milestones } = projectData;
 
-    const { description, budget, deadline, milestones } = projectData;
-
-    try {
-      const tx = await postProject(
-        signer,
-        description,
-        ethers.utils.parseEther(budget),
-        Math.floor(new Date(deadline).getTime() / 1000),
-        milestones.map((milestone: any) => ethers.utils.parseEther(milestone))
-      );
-      if (tx.transactionHash) {
-        toast.success('Project posted successfully!');
-         const projects = await getAllProjects(signer);
-          setProjects(projects);
-      }
-      // fetchProjects();
-    } catch (error: any) {
-      toast.error(error.message)
-      console.error("Error posting project:", error);
-    }
+    // try {
+    //   const tx = await postProject(
+    //     signer,
+    //     description,
+    //     ethers.utils.parseEther(budget),
+    //     Math.floor(new Date(deadline).getTime() / 1000),
+    //     milestones.map((milestone: any) => ethers.utils.parseEther(milestone))
+    //   );
+    //   if (tx.transactionHash) {
+    //     toast.success('Project posted successfully!');
+    //      const projects = await getAllProjects(signer);
+    //       setProjects(projects);
+    //   }
+    //   // fetchProjects();
+    // } catch (error: any) {
+    //   toast.error(error.message)
+    //   console.error("Error posting project:", error);
+    // }
   };
 
 
