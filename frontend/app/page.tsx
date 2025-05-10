@@ -14,12 +14,18 @@ import { ethers } from 'ethers';
 import ProjectList from './components/ProjectList';
 import ProjectCard from './components/ProjectCard';
 import PostProjectForm from './components/PostProjectForm';
+import PaymentTypeSelector from './components/PaymentTypeSelector';
 
 const Home = () => {
   const [projects, setProjects] = useState([]);
   const [signer, setSigner] = useState<any | undefined>(undefined);
+const [isFirstTimeUser, setIsFirstTimeUser] = useState<boolean | null>(null);
   const [eoaAddress, setEoaAddress] = useState<string>('');
+
   const [aaAddress, setAaAddress] = useState<string>('');
+  // payment type states
+  const [paymentType, setPaymentType] = useState(0);
+  const [selectedToken, setSelectedToken] = useState('');
   const [supportedTokens, setSupportedTokens] = useState<Array<any>>([]);
   const [isFetchingTokens, setIsFetchingTokens] = useState(false);
 
@@ -50,6 +56,8 @@ const Home = () => {
           fetchSupportedTokens();
           const projects = await getAllProjects(signer);
           setProjects(projects);
+          const userType = await isFirstTimePoster(signer, aaAddress) ? true : false;
+          setIsFirstTimeUser(userType)
         } catch (error) {
           console.error("Signer validation error:", error);
           toast.error("Wallet connection issue: please reconnect your wallet");
@@ -117,27 +125,39 @@ const Home = () => {
   const postingProject = async (projectData: any) => {
     if (!signer) return;
     const paymentType = await isFirstTimePoster(signer, aaAddress) ? 0 : 1;
-    console.log(paymentType)
-    // const { description, budget, deadline, milestones } = projectData;
+    const { description, budget, deadline, milestones } = projectData;
 
-    // try {
-    //   const tx = await postProject(
-    //     signer,
-    //     description,
-    //     ethers.utils.parseEther(budget),
-    //     Math.floor(new Date(deadline).getTime() / 1000),
-    //     milestones.map((milestone: any) => ethers.utils.parseEther(milestone))
-    //   );
-    //   if (tx.transactionHash) {
-    //     toast.success('Project posted successfully!');
-    //      const projects = await getAllProjects(signer);
-    //       setProjects(projects);
-    //   }
-    //   // fetchProjects();
-    // } catch (error: any) {
-    //   toast.error(error.message)
-    //   console.error("Error posting project:", error);
-    // }
+    try {
+      const tx = await postProject(
+        signer,
+        description,
+        ethers.utils.parseEther(budget),
+        Math.floor(new Date(deadline).getTime() / 1000),
+        milestones.map((milestone: any) => ethers.utils.parseEther(milestone)),
+        paymentType
+      );
+      if (tx.transactionHash) {
+        toast.success('Project posted successfully!');
+        const projects = await getAllProjects(signer);
+        setProjects(projects);
+      }
+      // fetchProjects();
+    } catch (error: any) {
+      toast.error(error.message)
+      console.error("Error posting project:", error);
+    }
+  };
+
+  /**
+   * Handle payment type change
+   */
+  const handlePaymentTypeChange = (type: number, token?: string) => {
+    setPaymentType(type);
+    if (token) {
+      setSelectedToken(token);
+    } else {
+      setSelectedToken('');
+    }
   };
 
 
@@ -147,7 +167,12 @@ const Home = () => {
     <div className="container mx-auto">
       <WalletConnect onWalletConnected={handleWalletConnected} />
       <h1 className="text-3xl font-bold mb-6">DesignByBid Projects</h1>
-      <PostProjectForm onSubmit={postingProject} />
+      <PostProjectForm onSubmit={postingProject} paymentType={paymentType} 
+      setPaymentType={handlePaymentTypeChange}
+      selectedToken={selectedToken} setSelectedToken={setSelectedToken}
+      supportedTokens={supportedTokens} isLoading={isFetchingTokens} isFirstTimeUser={isFirstTimeUser}  />
+
+      
       {projects?.map((project: any) => (
         <ProjectCard
           key={project.id}

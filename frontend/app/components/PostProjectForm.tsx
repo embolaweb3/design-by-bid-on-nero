@@ -2,7 +2,8 @@ import { useState } from 'react';
 import PaymentTypeSelector from './PaymentTypeSelector';
 import { toast } from 'react-toastify';
 
-export default function PostProjectForm({ onSubmit }: any) {
+export default function PostProjectForm({ onSubmit, paymentType, setPaymentType, selectedToken
+  , setSelectedToken, supportedTokens, isFetchingTokens, isFirstTimeUser }: any) {
   const [formData, setFormData] = useState({
     description: '',
     budget: '',
@@ -41,13 +42,13 @@ export default function PostProjectForm({ onSubmit }: any) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
-    
+
     setIsSubmitting(true);
     try {
       await onSubmit(formData);
-      toast.success('Project posted successfully!');
+      // toast.success('Project posted successfully!');
       // Reset form
       setFormData({
         description: '',
@@ -103,15 +104,30 @@ export default function PostProjectForm({ onSubmit }: any) {
           className="mb-2 p-2 border rounded w-full"
           disabled={isSubmitting}
         />
-        {/* <PaymentTypeSelector /> */}
+        {isFirstTimeUser === null ? (
+          <p>Checking user status...</p>
+        ) : isFirstTimeUser ? (
+          <p className="text-green-600 font-semibold mb-4">
+            🎉 You're a first-time user — gas is free!
+          </p>
+        ) : (
+          <PaymentTypeSelector
+            paymentType={paymentType}
+            setPaymentType={setPaymentType}
+            selectedToken={selectedToken}
+            setSelectedToken={setSelectedToken}
+            supportedTokens={supportedTokens}
+            isLoading={isFetchingTokens}
+          />
+        )}
+
         <button
           type="submit"
           disabled={isSubmitting}
-          className={`text-white p-2 rounded w-full mt-4 transition-colors ${
-            isSubmitting
-              ? 'bg-blue-500 cursor-not-allowed'
-              : 'bg-green-500 hover:bg-green-600'
-          }`}
+          className={`text-white p-2 rounded w-full mt-4 transition-colors ${isSubmitting
+            ? 'bg-blue-500 cursor-not-allowed'
+            : 'bg-green-500 hover:bg-green-600'
+            }`}
         >
           {isSubmitting ? 'Posting...' : 'Post Project'}
         </button>

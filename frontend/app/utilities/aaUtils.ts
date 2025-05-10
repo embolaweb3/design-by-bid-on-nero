@@ -533,10 +533,11 @@ export const isFirstTimePoster = async(accountSigner: ethers.Signer, userAddress
   const contract = new ethers.Contract(
     CONTRACT_ADDRESSES.designByBidContract,ABI,accountSigner);
 
-  const filter = contract.filters.ProjectPosted(userAddress);
-  const events = await contract.queryFilter(filter);
-
-  return events.length === 0;
+  const allEvents = await contract.queryFilter(contract.filters.ProjectPosted());
+const isFirstTime = !allEvents.some(event =>
+  event.args && event.args.owner.toLowerCase() === userAddress.toLowerCase()
+);
+  return isFirstTime
 }
 
 export const getAllProjects = async (
