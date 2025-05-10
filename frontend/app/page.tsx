@@ -28,8 +28,6 @@ const Home = () => {
     walletConnector = (window as any).ethereum
   }
 
-  // const { fetchProjects } = useContract();
-
   // Load supported tokens when component mounts and signer is available
   useEffect(() => {
     const loadTokens = async () => {
@@ -66,6 +64,7 @@ const Home = () => {
     if (!signer) return
     const loadProjects = async () => {
       const projects = await getAllProjects(signer);
+      console.log(projects,'pd')
       setProjects(projects);
     };
 

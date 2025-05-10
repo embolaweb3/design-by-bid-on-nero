@@ -27,7 +27,7 @@ export const NERO_CHAIN_CONFIG = {
     tokenPaymaster: "0x5a6680dFd4a77FEea0A7be291147768EaA2414ad",
     
     // contract address 
-    designByBidContract: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS || "0x836e4Ec1EdB01b65a37a879593395e6c9513745A",
+    designByBidContract: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS || "0x866682142e48C7cb4A368D9549927D6ebe492723",
   };
   
   // API key management for Paymaster

@@ -6,8 +6,6 @@
 
 ## 🌐 Live Deployment [app-url](https://design-by-bid-on-nero.vercel.app/)
 
-    
-
 ---
 
 ## ⚙️ Features
