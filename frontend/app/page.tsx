@@ -1,14 +1,17 @@
 "use client"
 
 import { useEffect, useState } from 'react';
-import { getSigner, getSupportedTokens, initAAClient, initAABuilder,
-getProject, postProject, 
-getAllProjects} from '../app/utilities/aaUtils';
+import {
+  getSigner, getSupportedTokens, initAAClient, initAABuilder,
+  getProject, postProject,
+  getAllProjects
+} from '../app/utilities/aaUtils';
 import WalletConnect from './components/WalletConnect';
 import { toast } from 'react-toastify';
 import { ethers } from 'ethers';
 // import { useContract } from '../app/utilities/contract';
 import ProjectList from './components/ProjectList';
+import ProjectCard from './components/ProjectCard';
 import PostProjectForm from './components/PostProjectForm';
 
 const Home = () => {
@@ -19,15 +22,15 @@ const Home = () => {
   const [supportedTokens, setSupportedTokens] = useState<Array<any>>([]);
   const [isFetchingTokens, setIsFetchingTokens] = useState(false);
 
-  let walletConnector:any
+  let walletConnector: any
 
-  if(typeof window !=='undefined'){
+  if (typeof window !== 'undefined') {
     walletConnector = (window as any).ethereum
   }
-  
+
   // const { fetchProjects } = useContract();
 
-   // Load supported tokens when component mounts and signer is available
+  // Load supported tokens when component mounts and signer is available
   useEffect(() => {
     const loadTokens = async () => {
       // Only run if signer is defined
@@ -59,11 +62,11 @@ const Home = () => {
     loadTokens();
   }, [signer]);
 
-    useEffect(() => {
-      if(!signer)return
+  useEffect(() => {
+    if (!signer) return
     const loadProjects = async () => {
       const projects = await getAllProjects(signer);
-      setProjects(projects); 
+      setProjects(projects);
     };
 
     loadProjects();
@@ -85,7 +88,7 @@ const Home = () => {
     }
   };
 
-   const fetchSupportedTokens = async () => {
+  const fetchSupportedTokens = async () => {
     if (!signer) {
       console.log("Signer not available");
       return;
@@ -116,7 +119,7 @@ const Home = () => {
     }
   };
 
-   const postingProject = async (projectData:any) => {
+  const postingProject = async (projectData: any) => {
     if (!signer) return;
 
     const { description, budget, deadline, milestones } = projectData;
@@ -127,15 +130,15 @@ const Home = () => {
         description,
         ethers.utils.parseEther(budget),
         Math.floor(new Date(deadline).getTime() / 1000),
-        milestones.map((milestone :any) => ethers.utils.parseEther(milestone))
+        milestones.map((milestone: any) => ethers.utils.parseEther(milestone))
       );
-      if(tx.transactionHash){
-      toast.success('Project posted successfully!');
-
+      if (tx.transactionHash) {
+        toast.success('Project posted successfully!');
 
       }
       // fetchProjects();
-    } catch (error) {
+    } catch (error: any) {
+      toast.error(error.message)
       console.error("Error posting project:", error);
     }
   };
@@ -148,7 +151,14 @@ const Home = () => {
       <WalletConnect onWalletConnected={handleWalletConnected} />
       <h1 className="text-3xl font-bold mb-6">DesignByBid Projects</h1>
       <PostProjectForm onSubmit={postingProject} />
-      <ProjectList projects={projects} />
+      {projects?.map((project:any) => (
+        <ProjectCard
+          key={project.id}
+          project={project}
+        />
+
+
+      ))}
     </div>
   );
 };
