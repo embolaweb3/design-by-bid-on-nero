@@ -1,7 +1,9 @@
 "use client"
 
 import { useEffect, useState } from 'react';
-import { getSigner, getSupportedTokens, initAAClient, initAABuilder, postProject } from '../app/utilities/aaUtils';
+import { getSigner, getSupportedTokens, initAAClient, initAABuilder,
+getProject, postProject, 
+getAllProjects} from '../app/utilities/aaUtils';
 import WalletConnect from './components/WalletConnect';
 import { toast } from 'react-toastify';
 import { ethers } from 'ethers';
@@ -58,13 +60,14 @@ const Home = () => {
   }, [signer]);
 
     useEffect(() => {
+      if(!signer)return
     const loadProjects = async () => {
-      const projects = await fetchProjects();
+      const projects = await getAllProjects(signer);
       setProjects(projects); 
     };
 
     loadProjects();
-  }, [fetchProjects]);
+  }, [projects]);
 
   const handleWalletConnected = async (eoaAddr: string, aaAddr: string) => {
     try {
@@ -127,7 +130,8 @@ const Home = () => {
         milestones.map((milestone :any) => ethers.utils.parseEther(milestone))
       );
       if(tx.transactionHash){
-      alert('Project posted successfully');
+      toast.success('Project posted successfully!');
+
 
       }
       // fetchProjects();
