@@ -28,6 +28,7 @@ const Home = () => {
     walletConnector = (window as any).ethereum
   }
 
+
   // Load supported tokens when component mounts and signer is available
   useEffect(() => {
     const loadTokens = async () => {
@@ -46,6 +47,8 @@ const Home = () => {
 
           // If connected, fetch tokens
           fetchSupportedTokens();
+          const projects = await getAllProjects(signer);
+          setProjects(projects);
         } catch (error) {
           console.error("Signer validation error:", error);
           toast.error("Wallet connection issue: please reconnect your wallet");
@@ -60,16 +63,7 @@ const Home = () => {
     loadTokens();
   }, [signer]);
 
-  useEffect(() => {
-    if (!signer) return
-    const loadProjects = async () => {
-      const projects = await getAllProjects(signer);
-      console.log(projects,'pd')
-      setProjects(projects);
-    };
 
-    loadProjects();
-  }, [projects]);
 
   const handleWalletConnected = async (eoaAddr: string, aaAddr: string) => {
     try {
@@ -79,6 +73,7 @@ const Home = () => {
       setEoaAddress(eoaAddr);
       setAaAddress(aaAddr);
       setSigner(realSigner);
+
 
       toast.success('Wallet connected successfully!');
     } catch (error) {
@@ -133,7 +128,8 @@ const Home = () => {
       );
       if (tx.transactionHash) {
         toast.success('Project posted successfully!');
-
+         const projects = await getAllProjects(signer);
+          setProjects(projects);
       }
       // fetchProjects();
     } catch (error: any) {
@@ -150,7 +146,7 @@ const Home = () => {
       <WalletConnect onWalletConnected={handleWalletConnected} />
       <h1 className="text-3xl font-bold mb-6">DesignByBid Projects</h1>
       <PostProjectForm onSubmit={postingProject} />
-      {projects?.map((project:any) => (
+      {projects?.map((project: any) => (
         <ProjectCard
           key={project.id}
           project={project}
