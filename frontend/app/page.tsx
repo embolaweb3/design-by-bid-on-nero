@@ -19,7 +19,7 @@ import PaymentTypeSelector from './components/PaymentTypeSelector';
 const Home = () => {
   const [projects, setProjects] = useState([]);
   const [signer, setSigner] = useState<any | undefined>(undefined);
-const [isFirstTimeUser, setIsFirstTimeUser] = useState<boolean | null>(null);
+  const [isFirstTimeUser, setIsFirstTimeUser] = useState<boolean | null>(null);
   const [eoaAddress, setEoaAddress] = useState<string>('');
 
   const [aaAddress, setAaAddress] = useState<string>('');
@@ -140,6 +140,8 @@ const [isFirstTimeUser, setIsFirstTimeUser] = useState<boolean | null>(null);
         toast.success('Project posted successfully!');
         const projects = await getAllProjects(signer);
         setProjects(projects);
+        const userType = await isFirstTimePoster(signer, aaAddress) ? true : false;
+        setIsFirstTimeUser(userType)
       }
       // fetchProjects();
     } catch (error: any) {
@@ -166,13 +168,13 @@ const [isFirstTimeUser, setIsFirstTimeUser] = useState<boolean | null>(null);
   return (
     <div className="container mx-auto">
       <WalletConnect onWalletConnected={handleWalletConnected} />
-      <h1 className="text-3xl font-bold mb-6">DesignByBid Projects</h1>
-      <PostProjectForm onSubmit={postingProject} paymentType={paymentType} 
-      setPaymentType={handlePaymentTypeChange}
-      selectedToken={selectedToken} setSelectedToken={setSelectedToken}
-      supportedTokens={supportedTokens} isLoading={isFetchingTokens} isFirstTimeUser={isFirstTimeUser}  />
-
-      
+      <PostProjectForm onSubmit={postingProject} paymentType={paymentType}
+        setPaymentType={handlePaymentTypeChange}
+        selectedToken={selectedToken} setSelectedToken={setSelectedToken}
+        supportedTokens={supportedTokens} isLoading={isFetchingTokens} isFirstTimeUser={isFirstTimeUser} />
+      <h1 className="text-4xl font-extrabold tracking-tight text-gray-800 mb-6 border-b-4 border-nero-blue pb-2">
+        🚀 DesignByBid Projects
+      </h1>
       {projects?.map((project: any) => (
         <ProjectCard
           key={project.id}

@@ -15,7 +15,7 @@ export default function Header() {
         className="text-2xl font-bold flex items-center space-x-2"
       >
         <FaHammer className="w-8 h-8" />
-        <span>DesignBuildBid</span>
+        <span>DesignByBid</span>
       </motion.h1>
       {/* <ConnectButton /> */}
     </motion.header>
