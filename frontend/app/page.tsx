@@ -21,6 +21,7 @@ const Home = () => {
   const [signer, setSigner] = useState<any | undefined>(undefined);
   const [isFirstTimeUser, setIsFirstTimeUser] = useState<boolean | null>(null);
   const [eoaAddress, setEoaAddress] = useState<string>('');
+  const [isLoading, setIsLoading] = useState(true);
 
   const [aaAddress, setAaAddress] = useState<string>('');
   // payment type states
@@ -38,6 +39,7 @@ const Home = () => {
 
   // Load supported tokens when component mounts and signer is available
   useEffect(() => {
+    setIsLoading(true);
     const loadTokens = async () => {
       // Only run if signer is defined
       if (signer) {
@@ -58,6 +60,7 @@ const Home = () => {
           setProjects(projects);
           const userType = await isFirstTimePoster(signer, aaAddress) ? true : false;
           setIsFirstTimeUser(userType)
+          setIsLoading(false);
         } catch (error) {
           console.error("Signer validation error:", error);
           toast.error("Wallet connection issue: please reconnect your wallet");
@@ -65,6 +68,7 @@ const Home = () => {
       } else {
         // Reset tokens if signer is not available
         setSupportedTokens([]);
+
         console.log("Signer not available, tokens reset");
       }
     };
@@ -175,14 +179,21 @@ const Home = () => {
       <h1 className="text-4xl font-extrabold tracking-tight text-gray-800 mb-6 border-b-4 border-nero-blue pb-2">
         🚀 DesignByBid Projects
       </h1>
-      {projects?.map((project: any) => (
-        <ProjectCard
-          key={project.id}
-          project={project}
-        />
-
-
-      ))}
+      {isLoading ? (
+        <div className="flex justify-center py-10">
+          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-nero-blue" />
+        </div>
+      ) : (
+        <>
+          {projects.length === 0 ? (
+            <p className="text-center text-gray-500">No projects found.</p>
+          ) : (
+            projects.map((project: any) => (
+              <ProjectCard key={project.id} project={project} />
+            ))
+          )}
+        </>
+      )}
     </div>
   );
 };
